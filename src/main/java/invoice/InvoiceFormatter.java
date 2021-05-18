@@ -23,6 +23,9 @@ public class InvoiceFormatter {
      */
     public static String getLine (boolean rightAligned, String line, Object... args) {
 
+        // Een regel mag geen null zijn. Dan wordt er een lege regel van gemaakt.
+        line = (line == null ? "" : line);
+
         // formatters (%s, %d etc.) in line worden vervangen door de elementen van args.
         line = String.format (line, args);
 
