@@ -2,26 +2,18 @@ package logging;
 
 import login.AuthenticationSimple;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.io.*;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static logging.LoggingFormatter.getFormattedDate;
 
 public class LoggingAdapter {
 
+    private static final Logger LOGGER = Logger.getLogger (LoggingAdapter.class.getName ());
     private static LoggingAdapter singleton;
-    private File logFile;
-
-    protected String getFormattedDate () {
-        return LocalDate.now ().format (DateTimeFormatter.ofPattern ("dd-MM-yyyy"));
-    }
-
-    protected String getFormattedDateAndTime() {
-        return getFormattedDate () + LocalDateTime.now ().format (DateTimeFormatter.ofPattern (" hh:mm:ss"));
-    }
 
     private LoggingAdapter() {
     }
@@ -35,55 +27,50 @@ public class LoggingAdapter {
         return singleton;
     }
 
-    private void setLogFilename () {
-        logFile = new File ("src\\main\\resources\\logging\\" + getFormattedDate () + ".log");
-    }
-
-    protected boolean logFileExists () {
-        return logFile.exists();
-    }
-
-    protected String getLogString (String message) {
-
-        String header = "";
-        setLogFilename ();
-
-        if (!logFileExists()) {
-            header = String.format ("%-19s %-20s %s%n", "Date", "Gebruikersnaam", "Logging");
-        }
-
-        String pre = String.format ("%-19s ", getFormattedDateAndTime());
-        pre += String.format ("%-20s ", AuthenticationSimple.getInstance ().getUserNameOfActiveUser ());
-
-        return String.format ("%s%s%s%n", header, pre, message);
-    }
-
-    public void printLog (String message) {
+    /*
+     * Omdat we er in onze originele oplossing voor hadden gekozen om logs per dag te verzamelen, moeten we nog
+     * steeds controleren of mogelijk een nieuwe dag is aangebroken (en dus een nieuwe logfile aangemaakt moet worden).
+     */
+    private void checkLogFile () {
 
         try {
-            String logString = getLogString (message);
-            PrintWriter writer = new PrintWriter (new FileOutputStream (logFile,true));
-            writer.append (logString);
-            writer.close ();
+
+            LoggingFormatter formatter = new LoggingFormatter ();
+
+            // Als de logfile nog niet bestaat, worden eventueel gekoppelde FileHandlers verwijderd.
+            if (formatter.logFileDoesNotExist ()) {
+                for (Handler handler : LOGGER.getHandlers ()) {
+                    handler.flush ();
+                    LOGGER.removeHandler(handler);
+                }
+            }
+
+            // Als er geen geldige FileHandlers zijn gekoppeld, gebeurt dat nu.
+            if (LOGGER.getHandlers().length == 0) {
+                FileHandler handler = new FileHandler(formatter.getFileForLogging().getPath (), true);
+                handler.setFormatter(formatter);
+                LOGGER.addHandler(handler);
+                LOGGER.setUseParentHandlers(false);
+            }
         }
-        catch (FileNotFoundException e) {
-            e.printStackTrace ();
+        catch (IOException ex) {
+            ex.printStackTrace ();
+        }
+    }
+
+    public void printLog (String message, Exception... e) {
+
+        checkLogFile();
+
+        if (e.length != 0) {
+            LOGGER.log (Level.SEVERE, message, e [0]);
+        }
+        else {
+            LOGGER.info(message);
         }
     }
 
     public void printLog (Exception e) {
-
-        StackTraceElement [] elements = e.getStackTrace ();
-        StringBuilder message = new StringBuilder ();
-        message.append (e.getMessage ());
-
-        for (StackTraceElement element : elements) {
-            message.append ("\r\n");
-            message.append (element.toString ());
-        }
-
-        if (!message.toString ().contains ("Logging")) {
-            printLog (message.toString ());
-        }
+        printLog (e.getMessage(), e);
     }
 }
