@@ -1,8 +1,13 @@
 package logging;
 
+import invoice.Logging;
 import login.Authentication;
 import login.AuthenticationNormal;
+import login.AuthenticationSimple;
 import org.junit.jupiter.api.Test;
+
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -38,5 +43,14 @@ class LoggingTest {
 
         expectedLogString += String.format ("%-19s %-20s %s%n", logging.getFormattedDateAndTime (), "user1", "test");
         assertEquals (expectedLogString, actualLogString);
+    }
+
+    @Test
+    public void formatTest () {
+        AuthenticationSimple.getInstance ().authenticate ("user3", "3");
+        LoggingFormatter formatter = new LoggingFormatter ();
+        String expected = formatter.getFormattedDateAndTime() + String.format (" %-20s", "user3") + "test" + System.lineSeparator ();
+        String actual = new LoggingFormatter ().format (new LogRecord (Level.WARNING, "test"));
+        assertEquals (expected, actual);
     }
 }
