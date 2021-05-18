@@ -4,7 +4,6 @@ import login.Authentication;
 import login.AuthenticationNormal;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LoggingTest {
@@ -14,7 +13,7 @@ class LoggingTest {
 
         Authentication login = AuthenticationNormal.getInstance ();
         login.logout ();
-        Logging logging = Logging.getInstance ();
+        LoggingAdapter logging = LoggingAdapter.getInstance ();
 
         String actualLogString = logging.getLogString ("test");
         String expectedLogString = "";

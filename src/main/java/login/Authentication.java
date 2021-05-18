@@ -1,6 +1,6 @@
 package login;
 
-import logging.Logging;
+import logging.LoggingAdapter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -59,7 +59,7 @@ public abstract class Authentication {
         }
         catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
             e.printStackTrace();
-            Logging.getInstance ().printLog (e);
+            LoggingAdapter.getInstance ().printLog (e);
         }
 
         return singleton;
@@ -172,7 +172,7 @@ public abstract class Authentication {
         user = getUser (userName);
 
         if (user == null) {
-            Logging.getInstance ().printLog (String.format ("Authentication:authenticat - unknow user with username '%s' tried to login.", userName));
+            LoggingAdapter.getInstance ().printLog (String.format ("Authentication:authenticat - unknow user with username '%s' tried to login.", userName));
             return false;
         }
         else {

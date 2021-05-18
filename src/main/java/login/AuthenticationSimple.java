@@ -1,6 +1,6 @@
 package login;
 
-import logging.Logging;
+import logging.LoggingAdapter;
 
 /*
  * Bij eenvoudige authenticatie volstaat een gebruikersnaam voor inloggen.
@@ -58,7 +58,7 @@ public class AuthenticationSimple extends Authentication {
             }
             else {
                 printMessage ("Unknown user. " + (2 - i) + " attempts left.");
-                Logging.getInstance ().printLog (String.format ("Unknown user for user '%s'", userName));
+                LoggingAdapter.getInstance ().printLog (String.format ("Unknown user for user '%s'", userName));
             }
         }
 

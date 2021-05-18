@@ -10,9 +10,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class Logging {
+public class LoggingAdapter {
 
-    private static Logging singleton;
+    private static LoggingAdapter singleton;
     private File logFile;
 
     protected String getFormattedDate () {
@@ -23,20 +23,20 @@ public class Logging {
         return getFormattedDate () + LocalDateTime.now ().format (DateTimeFormatter.ofPattern (" hh:mm:ss"));
     }
 
-    private Logging () {
+    private LoggingAdapter() {
     }
 
-    public static Logging getInstance () {
+    public static LoggingAdapter getInstance () {
 
         if (singleton == null) {
-            singleton = new Logging ();
+            singleton = new LoggingAdapter();
         }
 
         return singleton;
     }
 
     private void setLogFilename () {
-        logFile = new File ("src\\main\\resources\\Logging\\" + getFormattedDate () + ".log");
+        logFile = new File ("src\\main\\resources\\logging\\" + getFormattedDate () + ".log");
     }
 
     protected boolean logFileExists () {

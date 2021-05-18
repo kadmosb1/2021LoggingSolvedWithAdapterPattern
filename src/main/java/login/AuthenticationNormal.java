@@ -1,6 +1,6 @@
 package login;
 
-import logging.Logging;
+import logging.LoggingAdapter;
 
 /*
  * Bij normale authenticatie wordt bij inloggen gevraagd om gebruikersnaam en password.
@@ -79,7 +79,7 @@ public class AuthenticationNormal extends Authentication {
                 }
                 else {
                     printMessage ("Unknown user or incorrect password. " + (2 - i) + " attempts left.");
-                    Logging.getInstance ().printLog (String.format ("Unknown user/incorrect password for user '%s'", userName));
+                    LoggingAdapter.getInstance ().printLog (String.format ("Unknown user/incorrect password for user '%s'", userName));
                 }
             }
         }
