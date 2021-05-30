@@ -1,0 +1,1 @@
+Dit is een testfile om te zorgen dat de directory resources/logging wordt meegenomen naar GIT.

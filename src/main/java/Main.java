@@ -1,4 +1,4 @@
-package invoice;
+import invoice.*;
 
 import java.util.ArrayList;
 
