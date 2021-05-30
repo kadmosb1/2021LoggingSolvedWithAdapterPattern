@@ -2,51 +2,38 @@ package logging;
 
 import login.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.logging.FileHandler;
-import java.util.logging.Formatter;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
+import java.util.logging.*;
 
 public class LoggingFormatter extends Formatter {
 
-    protected static String getFormattedDate () {
-        return LocalDate.now ().format (DateTimeFormatter.ofPattern ("dd-MM-yyyy"));
-    }
+    private final LoggingFileHandler fileHandler;
 
-    protected static String getFormattedDateAndTime() {
-        return getFormattedDate () + LocalDateTime.now ().format (DateTimeFormatter.ofPattern (" hh:mm:ss"));
-    }
-
-    private String getFileNameForLogging () {
-        return "src\\main\\resources\\logging\\" + getFormattedDate () + ".log";
-    }
-
-    protected File getFileForLogging () {
-        return new File (getFileNameForLogging ());
+    /*
+     * Om te kunnen controleren of een file bij een fileHandler
+     * leeg is, moet deze fileHandler bekend zijn (in de methode getHead).
+     */
+    public LoggingFormatter (LoggingFileHandler fileHandler) {
+        super ();
+        this.fileHandler = fileHandler;
     }
 
     @Override
     public String format(LogRecord record) {
-        String pre = getFormattedDateAndTime() + " ";
+        String pre = LoggingDateFormatter.getFormattedDateAndTime (LocalDateTime.now ()) + " ";
         pre += String.format ("%-20s ", AuthenticationSimple.getInstance ().getUserNameOfActiveUser ());
         return pre + formatMessage (record) + System.lineSeparator ();
     }
 
-    protected boolean logFileDoesNotExist () {
-        return !getFileForLogging ().exists ();
-    }
-
+    /*
+     * Als de file nog niet bestaat of nog leeg is, wordt
+     * een header bovenaan de file getoond.
+     */
     @Override
     public String getHead (Handler handler) {
 
         // Als de logfile nog niet bestaat moet bovenaan de file een header worden geplaatst.
-        if (logFileDoesNotExist()) {
+        if (fileHandler.logFileIsEmpty ()) {
             return String.format("%-19s %-20s %s%n", "Date", "Gebruikersnaam", "Logging");
         }
         else {
