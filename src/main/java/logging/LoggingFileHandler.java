@@ -7,7 +7,7 @@ import java.util.logging.*;
 
 public class LoggingFileHandler {
 
-    private Logger logger;
+    private final Logger logger;
 
     /*
      * Om een nieuwe file te kunnen koppelen aan de logger (omdat
@@ -52,7 +52,7 @@ public class LoggingFileHandler {
      * Omdat we er in onze originele oplossing voor hadden gekozen om logs per dag te verzamelen, moeten we nog
      * steeds controleren of mogelijk een nieuwe dag is aangebroken (en dus een nieuwe logfile aangemaakt moet worden).
      */
-    protected void checkLogFile () {
+    protected void checkNextDay () {
 
         try {
 

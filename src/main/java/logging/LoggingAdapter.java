@@ -24,7 +24,7 @@ public class LoggingAdapter {
     public void printLog (String message, Exception... e) {
 
         // Voor elke dag wordt een nieuwe log-file aangemaakt.
-        fileHandler.checkLogFile ();
+        fileHandler.checkNextDay();
 
         if (e.length != 0) {
             LOGGER.log (Level.SEVERE, message, e [0]);
