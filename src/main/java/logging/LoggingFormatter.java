@@ -18,11 +18,18 @@ public class LoggingFormatter extends Formatter {
         this.fileHandler = fileHandler;
     }
 
-    @Override
-    public String format(LogRecord record) {
-        String pre = LoggingDateFormatter.getFormattedDateAndTime (LocalDateTime.now ()) + " ";
+    /*
+     * Deze methode is toegevoegd om de overridden methode format te kunnen testen.
+     */
+    protected String format (LogRecord record, LocalDateTime currentTime) {
+        String pre = LoggingDateFormatter.getFormattedDateAndTime (currentTime) + " ";
         pre += String.format ("%-20s ", AuthenticationSimple.getInstance ().getUserNameOfActiveUser ());
         return pre + formatMessage (record) + System.lineSeparator ();
+    }
+
+    @Override
+    public String format(LogRecord record) {
+        return format (record, LocalDateTime.now ());
     }
 
     /*
